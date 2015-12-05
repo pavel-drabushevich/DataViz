@@ -33,13 +33,52 @@
 
 (q/defcomponent PanelWizard
   []
-  (d/section {:id "content"}
-             (d/div {} "Here you will be able to select X Y and items")
+  (d/section {:id "panel-wizard"}
+             (d/div {}
+                    "Here you will be able to select "
+                    (Selector {
+                                :items ["A", "B", "C"]
+                                :value "B"
+                                :onChange #(println (str "X was changed to " %1))
+                              })
+                    " as X"
+                    " and "
+                    (Selector {
+                                :items ["1", "2", "3"]
+                                :value "2"
+                                :onChange #(println (str "Y was changed to " %1))
+                              })
+                    " as Y"
+             )
   ))
+
+(q/defcomponent Option
+  [item is-selected?]
+  (d/option {:value item :selected is-selected?}
+            item
+  )
+)
+
+(q/defcomponent Selector
+  [val]
+  (def items (:items val))
+  (def value (:value val))
+  (def onChg (fn [e]
+                 ((:onChange val) (.-value (.-currentTarget e)))
+             ))
+  (apply d/select
+           {
+             :className "selector"
+             :onChange onChg
+           }
+           (map (fn [x] (Option x (= x value)))
+                items)
+  )
+)
 
 (q/defcomponent PanelResult
   []
-  (d/section {:id "content"}
+  (d/section {:id "panel-result"}
              (d/div {} "Here will be a result")
   ))
 
