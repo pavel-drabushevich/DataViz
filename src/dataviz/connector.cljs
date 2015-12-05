@@ -30,7 +30,15 @@
   [data db-created-cont]
   (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item)}) data))
   (comment (prn "data to store" db-data))
-  (def db (-> (ds/empty-db {})
+  (def schema
+      { 
+      	  :entity/id  {} 
+      	  :entity/title  {} 
+      	  :entity/state  {} 
+      }
+  )
+
+  (def db (-> (ds/empty-db schema)
             (ds/db-with db-data)
           )
   )

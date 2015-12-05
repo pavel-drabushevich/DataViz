@@ -119,32 +119,25 @@
     ;     :user/access "b77bc2a1280d59b6c26fee0122c46e7892d86f02"}])
     ; (persist @user-conn)
 
-    (def schema
-      { :entry/id           {:db/unique      :db.unique/identity}
-        :entry/child        {:db/cardinality :db.cardinality/many
-                         :db/valueType   :db.type/ref}
-        :entry/first-child  {:db/valueType   :db.type/ref} })
-    (defonce conn (data/create-conn schema))
-    (data/transact! conn [[:db/add 1 :entry/id "a"]
-                        [:db/add 1 :entry/child 2]
-                        [:db/add 1 :entry/child 3]
-                        [:db/add 1 :entry/first-child 2]
-                        [:db/add 2 :entry/id "b"]
-                        [:db/add 2 :entry/child 3]
-                        [:db/add 3 :entry/id "c"]]) 
-
     (defn make-slice [db, x, y]
-        (def s (:schema @conn))
+    	(prn "x" x)
+    	(prn "y" y)
+        (def s (:schema db))
+        (prn "schema" s)
         (defn axis [a]
           (map first 
             (data/q '[:find ?value
                 :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
                 :where [(= ?attr ?t)]
                 [?entity ?attr ?value]]
-              @conn [s a])))
+              db [s a])))
         (def xaxis (axis x))
         (def yaxis (axis y))
         (def cells `())
+
+        (prn "xaxis" xaxis)
+        (prn "yaxis" yaxis)
+        (prn "cells" cells)
 
         {:xaxis xaxis :yaxis yaxis :cells cells}
       )
@@ -154,10 +147,8 @@
       )
 
     (c/import (fn[db] 
-        (prn "I HAVE DB NOW!!!!!!" db)
-        (prn (prepare-attr db))
-        (prn ((partial make-slice db) :id :title))
+        (prn "db data = " db)
+        (prn "db metadata = " (prepare-attr db))
+        (ui/render (prepare-attr db) (partial make-slice db))
       ))
-
-    (ui/render (prepare-attr @conn) (partial make-slice @conn))
   )
