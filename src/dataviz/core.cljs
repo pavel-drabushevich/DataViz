@@ -144,8 +144,11 @@
       )
 
     (defn prepare-attr [db]
-      (keys (:schema db))
-      )
+      (keys 
+        (filter 
+          (fn [[k v]] 
+              (= (:db/axis v) :db.axis/available)) 
+          (:schema db))))
 
     (c/import (fn[db] 
         (prn "db data = " db)
