@@ -12,7 +12,7 @@
     [datascript.transit :as dt]
     [quiescent.core :as q :include-macros true]
     [quiescent.dom :as dom])
-  (:require-macros 
+  (:require-macros
     [cljs.core.async.macros :refer [go]])
   )
 
@@ -25,7 +25,7 @@
     :authorize-uri  "https://github.com/login/oauth/authorize"
     :redirect-uri "http://localhost"
     :access-token-uri "https://github.com/login/oauth/access_token"
-    :scope "public_repo"}) 
+    :scope "public_repo"})
 
 (defn authorize-uri [client-params csrf-token]
    (str
@@ -52,7 +52,7 @@
 
 (defn get-authentication-response [client-params code]
   (go
-    (let [response (<! (http/post "https://github.com/login/oauth/access_token" 
+    (let [response (<! (http/post "https://github.com/login/oauth/access_token"
                             {:form-params {
                                      :code          code
                                      :client_secret (:client-secret client-params)
@@ -75,7 +75,7 @@
     ;   (prn (:body response)))))
 
 
-(q/defcomponent SignIn 
+(q/defcomponent SignIn
   []
   (dom/div {}
     (dom/button {:onClick (fn [_]
@@ -105,9 +105,9 @@
 (defn persist [db]
   (js/localStorage.setItem "dataviz/userDB" (db->string db)))
 
-(defn ^:export start 
+(defn ^:export start
   []
-    ; (def auth-code (get 
+    ; (def auth-code (get
     ;     (:query (u/url (-> js/window .-location .-href)))
     ;     "code"))
     ; (if (nil? auth-code) (open-signin) (signin auth-code))
@@ -125,7 +125,7 @@
         (def s (:schema db))
         (prn "schema" s)
         (defn axis [a]
-          (map first 
+          (map first
             (data/q '[:find ?value
                 :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
                 :where [(= ?attr ?t)]
@@ -140,20 +140,28 @@
         (prn "yaxis" yaxis)
         (prn "cells" cells)
 
-        {:xaxis xaxis :yaxis yaxis :cells cells}
+        {:xaxis {:id x :value xaxis} :yaxis {:id y :value yaxis} :cells cells}
       )
 
     (defn prepare-attr [db]
-      (keys 
-        (filter 
-          (fn [[k v]] 
-              (= (:db/axis v) :db.axis/available)) 
-          (:schema db))))
+      (map name (keys
+        (filter
+          (fn [[k v]]
+              (= (:db/axis v) :db.axis/available))
+          (:schema db)))))
 
-    (c/import (fn[db] 
+    (c/import (fn[db]
         (prn "db data = " db)
         (prn "db metadata = " (:schema db))
-        (ui/render (prepare-attr db) (partial make-slice db))
+
+
+        (def schema (prepare-attr db))
+        (def mk (partial make-slice db))
+        (defn update [x y]
+            (def data (mk x y))
+            (ui/render schema data update)
+          )
+        (update (first schema) (last schema))
 
         (prn ((partial make-slice db) :state :title))
         (prn (data/q '[:find ?entity ?attr ?value

@@ -55,14 +55,14 @@
                     (Selector {
                                 :items (:xs full-state)
                                 :value (:x? full-state)
-                                :onChange #(println (str "X was changed to " %1))
+                                :onChange #((:update full-state) %1 (:y? full-state))
                               })
                     " as X"
                     " and "
                     (Selector {
                                 :items (:ys full-state)
                                 :value (:y? full-state)
-                                :onChange #(println (str "Y was changed to " %1))
+                                :onChange #((:update full-state) (:x? full-state) %1)
                               })
                     " as Y"
              )
@@ -119,17 +119,16 @@
   ))
 
 (defn app-state
-  [schema]
-
-    (def schema-keys (map name schema))
+  [schema data trigger-update]
     {
-       :xs schema-keys
-       :ys schema-keys
-       :x? (last schema-keys)
-       :y? (last schema-keys)
+       :xs schema
+       :ys schema
+       :x? (:id (:xaxis data))
+       :y? (:id (:yaxis data))
+       :update trigger-update
     })
 
 (defn render
-  [schema slice-interceptor]
+  [schema data trigger-update]
 ;;(println slice-interceptor)
-  (q/render (App (app-state schema)) js/document.body))
+  (q/render (App (app-state schema data trigger-update)) js/document.body))
