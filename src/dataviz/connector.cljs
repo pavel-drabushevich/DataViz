@@ -6,7 +6,7 @@
   )
 )
 
-(defrecord IssueData [id title state body])
+(defrecord IssueData [id title state body user])
 
 (defn import 
   [db-created-cont]
@@ -19,7 +19,7 @@
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x))) (:body response)))
+	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)))) (:body response)))
 	      (prn "fetched issues" data)
 	      (store data db-created-cont)
        )
@@ -28,7 +28,7 @@
 
 (defn store
   [data db-created-cont]
-  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item)}) data))
+  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item)}) data))
   (comment (prn "data to store" db-data))
   (def schema
       { 
@@ -36,6 +36,7 @@
       	  :title  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :state  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :body  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :user  {:db/axis :db.axis/available :db/card :db.card/available} 
       }
   )
 
