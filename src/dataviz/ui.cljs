@@ -101,20 +101,20 @@
   (def table (gen-table 100))
   (d/section {:id "panel-result"}
              (Table
-                #js {:width        400
+                #js {:width        800
                      :height       600
-                     :rowHeight    50
+                     :rowHeight    200
                      :rowGetter    #(get table %)
                      :rowsCount    (count table)
                      :headerHeight 50}
                 (Column
-                  #js {:label "Number" :dataKey 0 :cellDataGetter getter :width 100})
+                  #js {:label "Number" :fixed true  :dataKey 0 :cellDataGetter getter :width 200})
                 (Column
-                  #js {:label "Amount" :dataKey 1 :cellDataGetter getter :width 100})
+                  #js {:label "Amount" :fixed false :dataKey 1 :cellDataGetter getter :width 200})
                 (Column
-                  #js {:label "Coeff" :dataKey 2 :cellDataGetter getter :width 200})
+                  #js {:label "Coeff"  :fixed false :dataKey 2 :cellDataGetter getter :width 200})
                 (Column
-                  #js {:label "Store" :dataKey 3 :cellDataGetter getter :width 200})
+                  #js {:label "Store"  :fixed false :dataKey 3 :cellDataGetter getter :width 200})
              )
   ))
 
