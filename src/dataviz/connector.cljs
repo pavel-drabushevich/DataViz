@@ -32,9 +32,9 @@
   (comment (prn "data to store" db-data))
   (def schema
       { 
-      	  :entity/id  {} 
-      	  :entity/title  {} 
-      	  :entity/state  {} 
+      	  :id  {} 
+      	  :title  {} 
+      	  :state  {} 
       }
   )
 
