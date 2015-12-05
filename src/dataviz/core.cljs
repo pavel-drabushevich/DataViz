@@ -119,8 +119,6 @@
     ;     :user/access "b77bc2a1280d59b6c26fee0122c46e7892d86f02"}])
     ; (persist @user-conn)
 
-    (c/import (fn[db] (prn "I HAVE DB NOW!!!!!!" db)))
-
     (def schema
       { :entry/id           {:db/unique      :db.unique/identity}
         :entry/child        {:db/cardinality :db.cardinality/many
@@ -135,13 +133,7 @@
                         [:db/add 2 :entry/child 3]
                         [:db/add 3 :entry/id "c"]]) 
 
-    ; (println (data/q '[:find ?entity ?attr ?value
-    ;    :in $ [[?attr [[?aprop ?avalue] ...]] ...]
-    ;           [?entity ?attr ?value]]
-    ;  @conn (:schema @conn)))
-    (def attr (keys (:schema @conn)))
-
-    (defn make-slice [x, y]
+    (defn make-slice [db, x, y]
         (def s (:schema @conn))
         (defn axis [a]
           (map first 
@@ -156,8 +148,15 @@
 
         {:xaxis xaxis :yaxis yaxis :cells cells}
       )
-
-    (println (make-slice :entry/id :entry/child))
     
-    (ui/render attr make-slice)
+    (defn prepare-attr [db]
+      (keys (:schema db))
+      )
+
+    (c/import (fn[db] 
+        (prn "I HAVE DB NOW!!!!!!" db)
+        (prn (prepare-attr db))
+        (prn ((partial make-slice db) :id :title))
+        (ui/render)
+      ))
   )
