@@ -4,7 +4,8 @@
                  [org.clojure/clojurescript "1.7.170"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [datascript "0.13.0"]
-                 [quiescent/quiescent "0.2.0-RC1"]]
+                 [quiescent/quiescent "0.2.0-RC1"]
+                 [com.cemerick/url "0.1.1"]]
   :resource-paths ["resources" "lib"]
   :cljsbuild { 
     :builds [
