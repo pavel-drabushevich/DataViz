@@ -6,9 +6,10 @@
                  [datascript "0.13.0"]
                  [quiescent/quiescent "0.2.0-RC1"]
                  [cljs-http "0.1.38"]
+                 [cljsjs/fixed-data-table "0.4.1-0"]
                  [com.cemerick/url "0.1.1"]]
   :resource-paths ["resources" "lib"]
-  :cljsbuild { 
+  :cljsbuild {
     :builds [
       { :id "none"
         :source-paths ["src"]
