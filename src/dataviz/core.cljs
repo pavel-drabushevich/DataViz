@@ -148,7 +148,7 @@
 
         {:xaxis xaxis :yaxis yaxis :cells cells}
       )
-    
+
     (defn prepare-attr [db]
       (keys (:schema db))
       )
@@ -157,6 +157,7 @@
         (prn "I HAVE DB NOW!!!!!!" db)
         (prn (prepare-attr db))
         (prn ((partial make-slice db) :id :title))
-        (ui/render)
       ))
+
+    (ui/render (prepare-attr @conn) (partial make-slice @conn))
   )
