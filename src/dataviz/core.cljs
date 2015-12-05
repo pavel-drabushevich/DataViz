@@ -119,7 +119,7 @@
     ;     :user/access "b77bc2a1280d59b6c26fee0122c46e7892d86f02"}])
     ; (persist @user-conn)
 
-    (c/import)
+    (c/import (fn[db] (prn "I HAVE DB NOW!!!!!!" db)))
 
     (def schema
       { :entry/id           {:db/unique      :db.unique/identity}

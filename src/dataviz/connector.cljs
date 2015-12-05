@@ -1,31 +1,39 @@
 (ns dataviz.connector
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [datascript.core :as data]
+  (:require [datascript.core :as ds]
   			[cljs-http.client :as http]
   			[cljs.core.async :refer [<!]]
   )
 )
 
-(defrecord IssueData [title state])
+(defrecord IssueData [id title state])
 
 (defn import 
-  []
-  (load-from-outside "https://api.github.com/repos/TargetProcess/tauCharts/issues")
+  [db-created-cont]
+  (load-from-outside "https://api.github.com/repos/TargetProcess/tauCharts/issues" db-created-cont)
 )
 
 (defn load-from-outside
-  [url]
+  [url db-created-cont]
   (prn "going to fetch from" url)
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] (IssueData. (:title x) (:state x))) (:body response)))
-	      (prn "issues" data)
-	      (store data)
+	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x))) (:body response)))
+	      (prn "fetched issues" data)
+	      (store data db-created-cont)
        )
   )
 )
 
 (defn store
-  [data]
+  [data db-created-cont]
+  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item)}) data))
+  (comment (prn "data to store" db-data))
+  (def db (-> (ds/empty-db {})
+            (ds/db-with db-data)
+          )
+  )
+  (comment (prn "data script db data" db))
+  (db-created-cont db)
 )
