@@ -152,7 +152,7 @@
 
     (c/import (fn[db] 
         (prn "db data = " db)
-        (prn "db metadata = " (prepare-attr db))
+        (prn "db metadata = " (:schema db))
         (ui/render (prepare-attr db) (partial make-slice db))
 
         (prn ((partial make-slice db) :state :title))
