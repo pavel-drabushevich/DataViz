@@ -120,8 +120,8 @@
     ; (persist @user-conn)
 
     (defn make-slice [db, x, y]
-    	(prn "x" x)
-    	(prn "y" y)
+        (prn "x" x)
+        (prn "y" y)
         (def s (:schema db))
         (prn "schema" s)
         (defn axis [a]
@@ -129,6 +129,7 @@
             (data/q '[:find ?value
                 :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
                 :where [(= ?attr ?t)]
+                        [(= ?avalue :db.axis/available)]
                 [?entity ?attr ?value]]
               db [s a])))
         (def xaxis (axis x))
@@ -150,5 +151,12 @@
         (prn "db data = " db)
         (prn "db metadata = " (prepare-attr db))
         (ui/render (prepare-attr db) (partial make-slice db))
+
+        (prn ((partial make-slice db) :state :title))
+        (prn (data/q '[:find ?entity ?attr ?value
+                :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
+                :where [(= ?avalue :db.card/available)]
+                [?entity ?attr ?value]]
+              db [s a]))
       ))
   )
