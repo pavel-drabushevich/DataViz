@@ -67,7 +67,7 @@
 
 (q/defcomponent PanelWizard
   [full-state]
-  (d/section {:id "panel-wizard"}
+  (d/section {:id "panel-wizard" :className "panel-wizard"}
              (d/div {}
                     "Here you will be able to select "
                     (Selector {
@@ -101,8 +101,10 @@
 
 (q/defcomponent PanelResult
   [full-state]
-  (def doc-width (.-clientWidth js/document.body))
-  (def col-width (/ (- doc-width 16) (+ (count (:xvalues full-state)) 1)))
+  (def doc-height (- (.-innerHeight js/window) 144))
+  (def row-height (/ doc-height (count (:yvalues full-state))))
+  (def doc-width  (.-clientWidth js/document.body))
+  (def col-width  (/ (- doc-width 16) (+ (count (:xvalues full-state)) 1)))
   (def column-labels
     (conj (:xvalues full-state)
           (str (:y? full-state) "/" (:x? full-state))))
@@ -125,8 +127,8 @@
   (d/section {:id "panel-result"}
              (Table
                 #js {:width        doc-width
-                     :height       600
-                     :rowHeight    200
+                     :height       doc-height
+                     :rowHeight    row-height
                      :rowGetter    get-row
                      :rowsCount    (count (:yvalues full-state))
                      :headerHeight 50}
@@ -144,9 +146,9 @@
 (q/defcomponent Board
   [full-state]
   (d/div {}
-         (Header)
+         ;;(Header)
          (Content full-state)
-         (Footer)
+         ;;(Footer)
   ))
 
 (defn board-state
@@ -167,12 +169,14 @@
 
 (q/defcomponent Home
   [props]
-  (d/div {}
-         (Header)
+  (d/div {:className "start-screen"}
+         ;;(Header)
          (Selector {  :items `("github" "travis")
                       :value (:source-type @state-atom)
                       :onChange #(swap! state-atom assoc :source-type %)})
-         (du/input {:value (:input @state-atom)
+         (du/input {
+              :placeholder "enter repo"
+              :value (:input @state-atom)
               :style {:margin "10px"}
               :onChange (fn [evt]
                           (swap! state-atom assoc :input
@@ -180,7 +184,8 @@
          (d/button {:onClick (fn [_]
                                 ((:choose props) (:source-type @state-atom) (:input @state-atom)))}
             "Explore!")
-         (Footer)))
+         ;;(Footer)
+  ))
 
 (defn render-board
   [schema data trigger-update]

@@ -360,3 +360,30 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main, .fixedDataTableColu
     padding: 3px;
     margin: 3px;
 }
+
+.panel-wizard {
+    margin-bottom: 16px;
+}
+
+.start-screen {
+    margin-left: 33%;
+    margin-top: 22%;
+}
+
+.start-screen input {
+    font-size: 22px;
+    min-height: 27px;
+    min-width: 350px;
+    padding-left: 7px;
+}
+.start-screen select,
+.start-screen button {
+    font-size: 22px;
+    min-height: 33px;
+}
+
+.start-screen button {
+    background-color: #abceee;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.5);
+    border: none;
+}
