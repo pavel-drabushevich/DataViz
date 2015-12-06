@@ -68,32 +68,29 @@
              )
   ))
 
-(defn gen-table
-  "Generate `size` rows vector of 4 columns vectors to mock up the table."
-  [size]
-  (mapv (fn [i] [i                                                   ; Number
-                 (rand-int 1000)                                     ; Amount
-                 (rand)                                              ; Coeff
-                 (rand-nth ["Here" "There" "Nowhere" "Somewhere"])]) ; Store
-        (range 1 (inc size))))
+(defn getter [k row]
+  (nth row k))
 
-(defn getter [k row] (get row k))
+(defn prepare-column [indx label]
+  (Column #js {:label label :fixed true  :dataKey indx :cellDataGetter getter :width col-width}))
 
 (q/defcomponent PanelResult
   [full-state]
-  (def table (gen-table 100))
   (def doc-width (.-clientWidth js/document.body))
-  (def col-width (/ doc-width (count (:xvalues full-state))))
-  (prn "-----" (:xvalues full-state))
-  (def columns (map #(Column #js {:label % :fixed true  :dataKey 0 :cellDataGetter getter :width col-width}) 
-    (:xvalues full-state)))
+  (def col-width (/ doc-width (+ (count (:xvalues full-state)) 1)))
+  (def column-labels (conj (:xvalues full-state) 
+    (str (:y? full-state) "/" (:x? full-state))))
+  (def columns (map-indexed prepare-column column-labels))
+  (defn get-row [k]
+    (def h (nth (:yvalues full-state) k))
+    (conj (range 0 (count (:xvalues full-state))) h))
   (d/section {:id "panel-result"}
              (Table
                 #js {:width        doc-width
                      :height       600
                      :rowHeight    200
-                     :rowGetter    #(get table %)
-                     :rowsCount    (count table)
+                     :rowGetter    get-row
+                     :rowsCount    (count (:yvalues full-state))
                      :headerHeight 50}
                 columns
              )
