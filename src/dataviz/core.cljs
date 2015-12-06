@@ -125,13 +125,15 @@
         (def s (:schema db))
         (prn "schema" s)
         (defn axis [a]
-          (map first
-            (data/q '[:find ?value
-                :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
-                :where [(= ?attr ?t)]
-                        [(= ?avalue :db.axis/available)]
-                [?entity ?attr ?value]]
-              db [s (keyword a)])))
+          (if (= x "none") 
+            `()
+            (map first
+              (data/q '[:find ?value
+                  :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
+                  :where [(= ?attr ?t)]
+                         [(= ?avalue :db.axis/available)]
+                  [?entity ?attr ?value]]
+              db [s (keyword a)]))))
         (def xaxis (axis x))
         (def yaxis (axis y))
         (def cells `())

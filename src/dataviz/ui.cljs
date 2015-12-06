@@ -53,14 +53,14 @@
              (d/div {}
                     "Here you will be able to select "
                     (Selector {
-                                :items (:xs full-state)
+                                :items (conj (:xs full-state) "none")
                                 :value (:x? full-state)
                                 :onChange #((:update full-state) %1 (:y? full-state))
                               })
                     " as X"
                     " and "
                     (Selector {
-                                :items (:ys full-state)
+                                :items (conj (:ys full-state) "none")
                                 :value (:y? full-state)
                                 :onChange #((:update full-state) (:x? full-state) %1)
                               })
