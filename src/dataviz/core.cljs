@@ -40,7 +40,7 @@
 	        	   	   		 		)
 	        	   	   		   )
 	        	   	   		   {}
-	        	   	   		   (rest x)
+	        	   	   		   x
 	        	   	   )
 	        	   	) (vals grouped)))
 	        	   (def cells-data (map (fn[c]
