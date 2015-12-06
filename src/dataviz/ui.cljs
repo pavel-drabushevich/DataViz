@@ -69,20 +69,20 @@
   [full-state]
   (d/section {:id "panel-wizard" :className "panel-wizard"}
              (d/div {}
-                    "Here you will be able to select "
+                    "Select "
                     (Selector {
                                 :items (:xs full-state)
                                 :value (:x? full-state)
                                 :onChange #((:update full-state) %1 (:y? full-state))
                               })
-                    " as X"
+                    " as X \u2192"
                     " and "
                     (Selector {
                                 :items (:ys full-state)
                                 :value (:y? full-state)
                                 :onChange #((:update full-state) (:x? full-state) %1)
                               })
-                    " as Y"
+                    " as Y \u2193"
              )
   ))
 

@@ -363,6 +363,13 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main, .fixedDataTableColu
 
 .panel-wizard {
     margin-bottom: 16px;
+    padding: 20px 0 20px 10px;
+    font-size: 22px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.5);
+}
+
+.panel-wizard select {
+    font-size: 22px;
 }
 
 .start-screen {
@@ -375,15 +382,20 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main, .fixedDataTableColu
     min-height: 27px;
     min-width: 350px;
     padding-left: 7px;
+    font-family: monospace;
 }
 .start-screen select,
 .start-screen button {
     font-size: 22px;
     min-height: 33px;
+    font-family: monospace;
 }
 
 .start-screen button {
-    background-color: #abceee;
     box-shadow: 2px 2px 3px rgba(0,0,0,0.5);
     border: none;
+}
+
+body {
+    font-family: monospace;
 }
