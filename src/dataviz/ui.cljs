@@ -103,7 +103,7 @@
              (PanelResult full-state)
   ))
 
-(q/defcomponent App
+(q/defcomponent Board
   [full-state]
   (d/div {}
          (Header)
@@ -111,7 +111,17 @@
          (Footer)
   ))
 
-(defn app-state
+(q/defcomponent Home
+  [state]
+  (d/div {}
+         (Header)
+         (d/button {:onClick (fn [_]
+                                (choose)
+                              )}
+            "Viz It!")
+         (Footer)))
+
+(defn board-state
   [schema data trigger-update]
     {
        :xs (conj schema "none")
@@ -123,7 +133,10 @@
        :update trigger-update
     })
 
-(defn render
+(defn render-board
   [schema data trigger-update]
-;;(println slice-interceptor)
-  (q/render (App (app-state schema data trigger-update)) js/document.body))
+  (q/render (Board (board-state schema data trigger-update)) js/document.body))
+
+(defn render-home
+  [choose]
+  (q/render (Home {:choose choose} js/document.body)))

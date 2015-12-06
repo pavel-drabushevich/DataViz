@@ -14,7 +14,8 @@
 )
 
 (defn load-from-outside
-  [url db-created-cont]
+  [rep db-created-cont]
+  (def url (str "https://api.github.com/repos/" rep "/issues?state=all"))
   (prn "going to fetch from" url)
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
