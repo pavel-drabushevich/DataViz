@@ -142,7 +142,7 @@
         (prn "yaxis" yaxis)
         (prn "cells" cells)
 
-        {:xaxis {:id x :value xaxis} :yaxis {:id y :value yaxis} :cells cells}
+        {:xaxis {:id x :values xaxis} :yaxis {:id y :values yaxis} :cells cells}
       )
 
     (defn prepare-attr [db]

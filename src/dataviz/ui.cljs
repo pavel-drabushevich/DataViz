@@ -53,14 +53,14 @@
              (d/div {}
                     "Here you will be able to select "
                     (Selector {
-                                :items (conj (:xs full-state) "none")
+                                :items (:xs full-state)
                                 :value (:x? full-state)
                                 :onChange #((:update full-state) %1 (:y? full-state))
                               })
                     " as X"
                     " and "
                     (Selector {
-                                :items (conj (:ys full-state) "none")
+                                :items (:ys full-state)
                                 :value (:y? full-state)
                                 :onChange #((:update full-state) (:x? full-state) %1)
                               })
@@ -80,10 +80,13 @@
 (defn getter [k row] (get row k))
 
 (q/defcomponent PanelResult
-  []
+  [full-state]
   (def table (gen-table 100))
   (def doc-width (.-clientWidth js/document.body))
-  (def col-width (/ doc-width 4))
+  (def col-width (/ doc-width (count (:xvalues full-state))))
+  (prn "-----" (:xvalues full-state))
+  (def columns (map #(Column #js {:label % :fixed true  :dataKey 0 :cellDataGetter getter :width col-width}) 
+    (:xvalues full-state)))
   (d/section {:id "panel-result"}
              (Table
                 #js {:width        doc-width
@@ -92,14 +95,7 @@
                      :rowGetter    #(get table %)
                      :rowsCount    (count table)
                      :headerHeight 50}
-                (Column
-                  #js {:label "Number" :fixed true  :dataKey 0 :cellDataGetter getter :width col-width})
-                (Column
-                  #js {:label "Amount" :fixed false :dataKey 1 :cellDataGetter getter :width col-width})
-                (Column
-                  #js {:label "Coeff"  :fixed false :dataKey 2 :cellDataGetter getter :width col-width})
-                (Column
-                  #js {:label "Store"  :fixed false :dataKey 3 :cellDataGetter getter :width col-width})
+                columns
              )
   ))
 
@@ -107,7 +103,7 @@
   [full-state]
   (d/section {:id "content"}
              (PanelWizard full-state)
-             (PanelResult)
+             (PanelResult full-state)
   ))
 
 (q/defcomponent App
@@ -121,10 +117,12 @@
 (defn app-state
   [schema data trigger-update]
     {
-       :xs schema
-       :ys schema
+       :xs (conj schema "none")
+       :ys (conj schema "none")
        :x? (:id (:xaxis data))
        :y? (:id (:yaxis data))
+       :xvalues (conj (:values (:xaxis data)) "none")
+       :yvalues (conj (:values (:yaxis data)) "none")
        :update trigger-update
     })
 
