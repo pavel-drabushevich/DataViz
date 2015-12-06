@@ -3,6 +3,7 @@
   (:require [datascript.core :as ds]
   			[cljs-http.client :as http]
   			[cljs.core.async :refer [<!]]
+  			[dataviz.utils :as utils]
   )
 )
 
@@ -38,7 +39,7 @@
 
 (defn convert-github-data-to-db-data
 	[x]
-	{:id (:id x), :title (:title x), :state (:state x), :body (:body x), :user (:login (:user x)) :assignee (if (nil? (:assignee x)) "none" (:login (:assignee x)))}
+	{:id (:id x), :title (:title x), :state (:state x), :body (:body x), :user (:login (:user x)) :assignee (utils/none-if-nil (:assignee x) (fn[x] (:login x)))}
 )
 
 (defn build-github-db-schema

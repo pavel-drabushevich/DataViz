@@ -2,7 +2,8 @@
   (:require
     [dataviz.ui :as ui]
     [dataviz.connector :as c]
-    [datascript.core :as data])
+    [datascript.core :as data]
+    [dataviz.utils :as utils])
   )
 
 (enable-console-print!)
@@ -42,8 +43,8 @@
 	        	   	) (vals grouped)))
 	        	   (def cells-data (map (fn[c]
 	        	   							{
-	        	   								:x (get c (keyword x))
-	        	   								:y (get c (keyword y))
+	        	   								:x (utils/none-if-nil (get c (keyword x)) identity)
+	        	   								:y (utils/none-if-nil (get c (keyword y)) identity)
 	        	   								:data (dissoc c (keyword x) (keyword y))
 	        	   							}
 	        	   						)
