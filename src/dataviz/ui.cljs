@@ -2,6 +2,7 @@
   (:require
     [quiescent.core :as q :include-macros true]
     [quiescent.dom :as d]
+    [quiescent.dom.uncontrolled :as du]
     [cljsjs.fixed-data-table]
     [cljs.core.async :as async]))
 
@@ -111,16 +112,6 @@
          (Footer)
   ))
 
-(q/defcomponent Home
-  [state]
-  (d/div {}
-         (Header)
-         (d/button {:onClick (fn [_]
-                                (choose)
-                              )}
-            "Viz It!")
-         (Footer)))
-
 (defn board-state
   [schema data trigger-update]
     {
@@ -133,10 +124,29 @@
        :update trigger-update
     })
 
+(def state-atom (atom {:github-input "pavel-drobushevich/DataViz"
+                       :travisci-input "test"}))
+
+(q/defcomponent Home
+  [props]
+  (d/div {}
+         (Header)
+         (d/span {:id "github"} (d/strong {} "GitHub repo: "))
+         (du/input {:value (:github-input @state-atom)
+              :style {:margin "10px"}
+              :onChange (fn [evt]
+                          (swap! state-atom assoc :github-input
+                                 (.-value (.-target evt))))})
+         (d/button {:onClick (fn [_]
+                                ((:choose props) :github (:github-input @state-atom))
+                              )}
+            "Viz It!")
+         (Footer)))
+
 (defn render-board
   [schema data trigger-update]
   (q/render (Board (board-state schema data trigger-update)) js/document.body))
 
 (defn render-home
   [choose]
-  (q/render (Home {:choose choose} js/document.body)))
+  (q/render (Home {:choose choose}) js/document.body))

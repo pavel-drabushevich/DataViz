@@ -19,7 +19,7 @@
 (enable-console-print!)
 
 (defn open-board
-  [rep]
+  [type rep]
     (defn make-slice [db, x, y]
         (prn "x" x)
         (prn "y" y)
@@ -77,5 +77,7 @@
 
 (defn ^:export start
   []
-    (open-board "pavel-drobushevich/DataViz")
+    (ui/render-home (fn [type rep]
+        (open-board type rep)
+      ))
   )
