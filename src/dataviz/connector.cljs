@@ -6,8 +6,6 @@
   )
 )
 
-(defrecord IssueData [id title state body user assignee])
-
 (defn import 
   [url db-created-cont]
   (load-from-outside url db-created-cont)
@@ -20,7 +18,7 @@
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)) (if (nil? (:assignee x)) "none" (:login (:assignee x))))) (:body response)))
+	      (def data (map (fn[x] {:id (:id x), :title (:title x), :state (:state x), :body (:body x), :user (:login (:user x)) :assignee (if (nil? (:assignee x)) "none" (:login (:assignee x)))}) (:body response)))
 	      (store data db-created-cont)
        )
   )
@@ -29,8 +27,6 @@
 (defn store
   [data db-created-cont]
   (prn "data to db" data)
-  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee (:assignee item) }) data))
-  ;(prn "data to store" db-data)
   (def schema
       { 
       	  :id  {:db/axis :db.axis/none :db/card :db.card/available} 
@@ -41,11 +37,6 @@
       	  :assignee  {:db/axis :db.axis/available :db/card :db.card/available} 
       }
   )
-
-  (def db (-> (ds/empty-db schema)
-            (ds/db-with db-data)
-          )
-  )
-  ;(prn "data script db data" db)
+  (def db (-> (ds/empty-db schema) (ds/db-with data)))
   (db-created-cont db)
 )
