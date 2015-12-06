@@ -125,7 +125,7 @@
         (def s (:schema db))
         (prn "schema" s)
         (defn axis [a]
-          (if (= x "none") 
+          (if (= a "none") 
             `()
             (map first
               (data/q '[:find ?value
