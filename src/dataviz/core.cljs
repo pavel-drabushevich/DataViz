@@ -13,8 +13,6 @@
     (defn make-slice [db, x, y]
     	(def s (:schema db))
         (defn axis [a]
-          (if (= a "none") 
-            `()
             (let [data  (map first (data/q '[:find ?value
 							                  :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
 							                  :where [(= ?attr ?t)]
@@ -24,7 +22,6 @@
             (def vals-without-none (remove utils/none? data))
             (cons (utils/none-if-nil nil) vals-without-none)
             )
-          )
          )
 
         (defn cells [x y]
