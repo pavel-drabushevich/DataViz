@@ -131,7 +131,7 @@
                 :where [(= ?attr ?t)]
                         [(= ?avalue :db.axis/available)]
                 [?entity ?attr ?value]]
-              db [s a])))
+              db [s (keyword a)])))
         (def xaxis (axis x))
         (def yaxis (axis y))
         (def cells `())
