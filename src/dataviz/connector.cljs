@@ -10,7 +10,7 @@
 
 (defn import 
   [db-created-cont]
-  (load-from-outside "https://api.github.com/repos/TargetProcess/tauCharts/issues" db-created-cont)
+  (load-from-outside "https://api.github.com/repos/pavel-drobushevich/DataViz/issues" db-created-cont)
 )
 
 (defn load-from-outside
