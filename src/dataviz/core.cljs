@@ -82,6 +82,6 @@
 (defn ^:export start
   []
     (ui/render-home (fn [type rep]
-        (open-board type rep)
+        (open-board (keyword type) rep)
       ))
   )

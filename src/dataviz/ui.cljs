@@ -172,23 +172,24 @@
        :update trigger-update
     })
 
-(def state-atom (atom {:github-input "pavel-drobushevich/DataViz"
-                       :travisci-input "test"}))
+(def state-atom (atom {:source-type "github"
+                       :input "TargetProcess/tauCharts"}))
 
 (q/defcomponent Home
   [props]
   (d/div {}
          (Header)
-         (d/span {:id "github"} (d/strong {} "GitHub repo: "))
-         (du/input {:value (:github-input @state-atom)
+         (Selector {  :items `("github" "travis")
+                      :value (:source-type @state-atom)
+                      :onChange #(swap! state-atom assoc :source-type %)})
+         (du/input {:value (:input @state-atom)
               :style {:margin "10px"}
               :onChange (fn [evt]
-                          (swap! state-atom assoc :github-input
+                          (swap! state-atom assoc :input
                                  (.-value (.-target evt))))})
          (d/button {:onClick (fn [_]
-                                ((:choose props) :github (:github-input @state-atom))
-                              )}
-            "Viz It!")
+                                ((:choose props) (:source-type @state-atom) (:input @state-atom)))}
+            "Explore!")
          (Footer)))
 
 (defn render-board
