@@ -76,7 +76,7 @@
               (= (:db/axis v) :db.axis/available))
           (:schema db)))))
 
-    (c/import rep (fn[db]
+    (c/import rep :github (fn[db]
         (prn "db data = " db)
         (prn "db metadata = " (:schema db))
 

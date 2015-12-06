@@ -7,36 +7,75 @@
 )
 
 (defn import 
-  [url db-created-cont]
-  (load-from-outside url db-created-cont)
+  [repo source-type db-created-cont]
+  (case source-type
+  	:github (load-from-outside (build-github-url repo) convert-github-data-to-db-data build-github-db-schema db-created-cont)
+  	:travis (load-from-outside (build-travis-url repo) convert-travis-data-to-db-data build-travis-db-schema db-created-cont)
+  )
 )
 
 (defn load-from-outside
-  [rep db-created-cont]
-  (def url (str "https://api.github.com/repos/" rep "/issues?state=all"))
+  [url convert-to-db-data build-db-schema db-created-cont]
   (prn "going to fetch from" url)
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] {:id (:id x), :title (:title x), :state (:state x), :body (:body x), :user (:login (:user x)) :assignee (if (nil? (:assignee x)) "none" (:login (:assignee x)))}) (:body response)))
-	      (store data db-created-cont)
+	      (def data (map convert-to-db-data (:body response)))
+	      (store data build-db-schema db-created-cont)
        )
   )
 )
 
 (defn store
-  [data db-created-cont]
+  [data build-db-schema db-created-cont]
   (prn "data to db" data)
-  (def schema
-      { 
+  (def schema (build-db-schema))
+  (def db (-> (ds/empty-db schema) (ds/db-with data)))
+  (db-created-cont db)
+)
+
+
+(defn build-github-url
+	[repo]
+	(str "https://api.github.com/repos/" repo "/issues?state=all")
+)
+
+(defn convert-github-data-to-db-data
+	[x]
+	{:id (:id x), :title (:title x), :state (:state x), :body (:body x), :user (:login (:user x)) :assignee (if (nil? (:assignee x)) "none" (:login (:assignee x)))}
+)
+
+(defn build-github-db-schema
+	[]
+	{ 
       	  :id  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :title  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :state  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :body  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :user  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :assignee  {:db/axis :db.axis/available :db/card :db.card/available} 
-      }
-  )
-  (def db (-> (ds/empty-db schema) (ds/db-with data)))
-  (db-created-cont db)
+   }
+)
+
+(defn build-travis-url
+	[repo]
+	(str "https://api.travis-ci.org/repositories/" repo "/builds")
+)
+
+(defn convert-travis-data-to-db-data
+	[x]
+	{:id (:id x), :repository-id (:repository_id x), :state (:state x), :branch (:branch x), :duration (:duration x), :message (:message x), :event-type (:event_type x)}
+)
+
+(defn build-travis-db-schema
+	[]
+	{ 
+      	  :id  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :repository-id  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :state  {:db/axis :db.axis/available :db/card :db.card/available} 
+      	  :branch  {:db/axis :db.axis/available :db/card :db.card/available} 
+      	  :duration  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :message  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :event-type  {:db/axis :db.axis/available :db/card :db.card/available} 
+   }
 )
