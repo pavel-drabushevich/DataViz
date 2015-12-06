@@ -1,19 +1,8 @@
 (ns dataviz.core
   (:require
-    [clojure.string :as str]
-    [cemerick.url :as u]
-    [cljs.reader :refer [read-string]]
-    [cljs-http.client :as http]
-    [cljs.core.async :refer [<!]]
     [dataviz.ui :as ui]
     [dataviz.connector :as c]
-    [cljs.core.async :as async]
-    [datascript.core :as data]
-    [datascript.transit :as dt]
-    [quiescent.core :as q :include-macros true]
-    [quiescent.dom :as dom])
-  (:require-macros
-    [cljs.core.async.macros :refer [go]])
+    [datascript.core :as data])
   )
 
 (enable-console-print!)
