@@ -53,19 +53,27 @@
   (d/span {}
           colVal))
 
-(q/defcomponent CellCards
-  [colVal, colIndex, fullRow]
+(q/defcomponent Card
+  [cardData]
   (d/div {
            :style {
-                    :width 25
-                    :height 25
+                    ;; :width "50%"
+                    ;; :height 25
                     :background-color "green"
-                    :display "inline"
-                    :float "left"
+                    ;; :display "inline"
+                    ;; :float "left"
+                    :padding 3
                     :margin 3
                   }
          }
-         (d/span {} colVal)))
+         (:title cardData)))
+
+(q/defcomponent CellCards
+  [colVal, colIndex, fullRow]
+  (apply d/div
+         {}
+         (map (fn [colItem] (Card (:data colItem))) colVal))
+)
 
 (q/defcomponent PanelWizard
   [full-state]
@@ -105,12 +113,25 @@
   [full-state]
   (def doc-width (.-clientWidth js/document.body))
   (def col-width (/ doc-width (+ (count (:xvalues full-state)) 1)))
-  (def column-labels (conj (:xvalues full-state)
-    (str (:y? full-state) "/" (:x? full-state))))
+  (def column-labels
+    (conj (:xvalues full-state)
+          (str (:y? full-state) "/" (:x? full-state))))
+
   (def columns (map-indexed prepare-column column-labels))
   (defn get-row [k]
-    (def h (nth (:yvalues full-state) k))
-    (conj (range 0 (count (:xvalues full-state))) h))
+
+    (def x-vals (:xvalues full-state))
+    (def y-vals (:yvalues full-state))
+    (def cells (:cells full-state))
+
+    (def row-id (nth y-vals k))
+    (def row-cells (doall (filter #(= (:y %) row-id) cells)))
+
+    (def row (doall(map (fn [col-id]
+                            (filter #(= (:x %) col-id) row-cells))
+                        x-vals)))
+    (conj row row-id)
+  )
   (d/section {:id "panel-result"}
              (Table
                 #js {:width        doc-width
@@ -147,6 +168,7 @@
        :y? (:id (:yaxis data))
        :xvalues (conj (:values (:xaxis data)) "none")
        :yvalues (conj (:values (:yaxis data)) "none")
+       :cells (:cells data)
        :update trigger-update
     })
 
