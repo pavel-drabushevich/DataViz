@@ -166,8 +166,8 @@
        :ys (conj schema "none")
        :x? (:id (:xaxis data))
        :y? (:id (:yaxis data))
-       :xvalues (conj (:values (:xaxis data)) "none")
-       :yvalues (conj (:values (:yaxis data)) "none")
+       :xvalues (:values (:xaxis data))
+       :yvalues (:values (:yaxis data))
        :cells (:cells data)
        :update trigger-update
     })
