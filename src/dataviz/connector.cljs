@@ -6,11 +6,11 @@
   )
 )
 
-(defrecord IssueData [id title state body user])
+(defrecord IssueData [id title state body user assignee])
 
 (defn import 
-  [db-created-cont]
-  (load-from-outside "https://api.github.com/repos/pavel-drobushevich/DataViz/issues" db-created-cont)
+  [url db-created-cont]
+  (load-from-outside url db-created-cont)
 )
 
 (defn load-from-outside
@@ -19,7 +19,7 @@
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)))) (:body response)))
+	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)) (:assignee x))) (:body response)))
 	      (prn "fetched issues" data)
 	      (store data db-created-cont)
        )
@@ -28,7 +28,8 @@
 
 (defn store
   [data db-created-cont]
-  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item)}) data))
+  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee 
+  	(if (nil? (:assignee item)) "no assignee" (:login (:assignee item))) }) data))
   (comment (prn "data to store" db-data))
   (def schema
       { 
@@ -37,6 +38,7 @@
       	  :state  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :body  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :user  {:db/axis :db.axis/available :db/card :db.card/available} 
+      	  :assignee  {:db/axis :db.axis/available :db/card :db.card/available} 
       }
   )
 
