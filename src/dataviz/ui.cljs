@@ -48,6 +48,25 @@
   )
 )
 
+(q/defcomponent CellText
+  [colVal, colIndex, fullRow]
+  (d/span {}
+          colVal))
+
+(q/defcomponent CellCards
+  [colVal, colIndex, fullRow]
+  (d/div {
+           :style {
+                    :width 25
+                    :height 25
+                    :background-color "green"
+                    :display "inline"
+                    :float "left"
+                    :margin 3
+                  }
+         }
+         (d/span {} colVal)))
+
 (q/defcomponent PanelWizard
   [full-state]
   (d/section {:id "panel-wizard"}
@@ -73,13 +92,20 @@
   (nth row k))
 
 (defn prepare-column [indx label]
-  (Column #js {:label label :fixed true  :dataKey indx :cellDataGetter getter :width col-width}))
+  (Column #js {
+                :label label
+                :fixed true
+                :dataKey indx
+                :cellDataGetter getter
+                :cellRenderer (if (= indx 0) CellText CellCards)
+                :width col-width
+              }))
 
 (q/defcomponent PanelResult
   [full-state]
   (def doc-width (.-clientWidth js/document.body))
   (def col-width (/ doc-width (+ (count (:xvalues full-state)) 1)))
-  (def column-labels (conj (:xvalues full-state) 
+  (def column-labels (conj (:xvalues full-state)
     (str (:y? full-state) "/" (:x? full-state))))
   (def columns (map-indexed prepare-column column-labels))
   (defn get-row [k]
