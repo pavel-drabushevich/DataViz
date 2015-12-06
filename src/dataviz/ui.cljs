@@ -50,22 +50,12 @@
 
 (q/defcomponent CellText
   [colVal, colIndex, fullRow]
-  (d/span {}
-          colVal))
+  (d/div {:className "tick"}
+         colVal))
 
 (q/defcomponent Card
   [cardData]
-  (d/div {
-           :style {
-                    ;; :width "50%"
-                    ;; :height 25
-                    :background-color "green"
-                    ;; :display "inline"
-                    ;; :float "left"
-                    :padding 3
-                    :margin 3
-                  }
-         }
+  (d/div {:className "card"}
          (:title cardData)))
 
 (q/defcomponent CellCards
