@@ -20,17 +20,16 @@
   (go (let [response (<! (http/get url {:with-credentials? false}))]
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
-	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)) (:assignee x))) (:body response)))
-	      (def filtered-data (filter (fn[x] (some? (:assignee x))) data))
-	      (store filtered-data db-created-cont)
+	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)) (if (nil? (:assignee x)) "none" (:login (:assignee x))))) (:body response)))
+	      (store data db-created-cont)
        )
   )
 )
 
 (defn store
   [data db-created-cont]
-  (prn "data to db" filtered-data)
-  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee (:login (:assignee item)) }) data))
+  (prn "data to db" data)
+  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee (:assignee item) }) data))
   ;(prn "data to store" db-data)
   (def schema
       { 
