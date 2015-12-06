@@ -16,10 +16,7 @@
 
 (defn load-from-outside
   [url convert-to-db-data build-db-schema db-created-cont]
-  (prn "going to fetch from" url)
   (go (let [response (<! (http/get url {:with-credentials? false}))]
-  	      (prn "fetched from" url)
-	      (prn "status code" (:status response))
 	      (def data (map convert-to-db-data (:body response)))
 	      (store data build-db-schema db-created-cont)
        )
@@ -28,7 +25,6 @@
 
 (defn store
   [data build-db-schema db-created-cont]
-  (prn "data to db" data)
   (def schema (build-db-schema))
   (def db (-> (ds/empty-db schema) (ds/db-with data)))
   (db-created-cont db)

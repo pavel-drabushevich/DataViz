@@ -8,12 +8,9 @@
 (enable-console-print!)
 
 (defn open-board
-  [type rep]
+  [source-type repo]
     (defn make-slice [db, x, y]
     	(def s (:schema db))
-        (prn "x meta" x)
-        (prn "y meta" y)
-        (prn "schema" s)
         (defn axis [a]
           (if (= a "none") 
             `()
@@ -43,7 +40,6 @@
 	        	   	   		   (rest x)
 	        	   	   )
 	        	   	) (vals grouped)))
-	        	   (prn "raw-cells-data" raw-cells-data)
 	        	   (def cells-data (map (fn[c]
 	        	   							{
 	        	   								:x (get c (keyword x))
@@ -62,10 +58,6 @@
         (def yaxis (axis y))
         (def cells (cells x y))
 
-        (prn "xaxis" xaxis)
-        (prn "yaxis" yaxis)
-        (prn "cells" cells)
-
         {:xaxis {:id x :values xaxis} :yaxis {:id y :values yaxis} :cells cells}
       )
 
@@ -76,11 +68,7 @@
               (= (:db/axis v) :db.axis/available))
           (:schema db)))))
 
-    (c/import rep :github (fn[db]
-        (prn "db data = " db)
-        (prn "db metadata = " (:schema db))
-
-
+    (c/import repo source-type (fn[db]
         (def schema (prepare-attr db))
         (def mk (partial make-slice db))
         (defn update [x y]
