@@ -15,12 +15,17 @@
         (defn axis [a]
           (if (= a "none") 
             `()
-            (map first
-              (data/q '[:find ?value
-                  :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
-                  :where [(= ?attr ?t)]
-                  [?entity ?attr ?value]]
-              db [s (keyword a)]))))
+            (let [data  (map first (data/q '[:find ?value
+							                  :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
+							                  :where [(= ?attr ?t)]
+							                  [?entity ?attr ?value]]
+              						db [s (keyword a)]))
+            	]
+            (def vals-without-none (remove utils/none? data))
+            (cons (utils/none-if-nil nil) vals-without-none)
+            )
+          )
+         )
 
         (defn cells [x y]
         	(if (= c "none") 
