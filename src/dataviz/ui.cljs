@@ -175,7 +175,7 @@
                       :value (:source-type @state-atom)
                       :onChange #(swap! state-atom assoc :source-type %)})
          (du/input {
-              :placeholder "enter repo"
+              :placeholder "enter public repo"
               :value (:input @state-atom)
               :style {:margin "10px"}
               :onChange (fn [evt]
