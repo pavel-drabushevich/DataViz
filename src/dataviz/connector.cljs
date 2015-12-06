@@ -61,7 +61,7 @@
 
 (defn convert-travis-data-to-db-data
 	[x]
-	{:id (:id x), :repository-id (:repository_id x), :state (:state x), :branch (:branch x), :duration (:duration x), :message (:message x), :event-type (:event_type x)}
+	{:id (:id x), :repository-id (:repository_id x), :state (:state x), :branch (:branch x), :duration (:duration x), :title (:message x), :event-type (:event_type x)}
 )
 
 (defn build-travis-db-schema
@@ -72,7 +72,7 @@
       	  :state  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :branch  {:db/axis :db.axis/available :db/card :db.card/available} 
       	  :duration  {:db/axis :db.axis/none :db/card :db.card/available} 
-      	  :message  {:db/axis :db.axis/none :db/card :db.card/available} 
+      	  :title  {:db/axis :db.axis/none :db/card :db.card/available} 
       	  :event-type  {:db/axis :db.axis/available :db/card :db.card/available} 
    }
 )
