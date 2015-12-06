@@ -102,7 +102,7 @@
 (q/defcomponent PanelResult
   [full-state]
   (def doc-width (.-clientWidth js/document.body))
-  (def col-width (/ doc-width (+ (count (:xvalues full-state)) 1)))
+  (def col-width (/ (- doc-width 16) (+ (count (:xvalues full-state)) 1)))
   (def column-labels
     (conj (:xvalues full-state)
           (str (:y? full-state) "/" (:x? full-state))))
