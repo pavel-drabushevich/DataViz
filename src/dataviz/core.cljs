@@ -10,9 +10,9 @@
 (defn open-board
   [type rep]
     (defn make-slice [db, x, y]
-        (prn "x" x)
-        (prn "y" y)
-        (def s (:schema db))
+    	(def s (:schema db))
+        (prn "x meta" x)
+        (prn "y meta" y)
         (prn "schema" s)
         (defn axis [a]
           (if (= a "none") 
@@ -21,12 +21,46 @@
               (data/q '[:find ?value
                   :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
                   :where [(= ?attr ?t)]
-                         [(= ?avalue :db.axis/available)]
                   [?entity ?attr ?value]]
               db [s (keyword a)]))))
+
+        (defn cells [x y]
+        	(if (= c "none") 
+	        	  `()
+	        	  (let [cell-db-data (data/q '[:find ?entity ?attr ?value
+					                :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?x ?y]
+					                :where [(or (= ?avalue :db.card/available) (= ?attr ?x) (= ?attr ?y))]
+					                [?entity ?attr ?value]]
+					                db [s (keyword x) (keyword y)])]
+	        	   (def grouped (group-by (fn[x] (first x)) cell-db-data))
+	        	   (def raw-cells-data (map (fn[x] 
+	        	   	   (reduce (fn[acc x]
+	        	   	   		 		(let [[id attr value] x]
+	        	   	   		 			(merge acc {attr value})
+	        	   	   		 		)
+	        	   	   		   )
+	        	   	   		   {}
+	        	   	   		   (rest x)
+	        	   	   )
+	        	   	) (vals grouped)))
+	        	   (prn "raw-cells-data" raw-cells-data)
+	        	   (def cells-data (map (fn[c]
+	        	   							{
+	        	   								:x (get c (keyword x))
+	        	   								:y (get c (keyword y))
+	        	   								:data (dissoc c (keyword x) (keyword y))
+	        	   							}
+	        	   						)
+	        	   						raw-cells-data
+	        	   					)
+	        	   )
+				   cells-data
+	        	  )
+       		)
+        )
         (def xaxis (axis x))
         (def yaxis (axis y))
-        (def cells `())
+        (def cells (cells x y))
 
         (prn "xaxis" xaxis)
         (prn "yaxis" yaxis)
@@ -54,13 +88,6 @@
             (ui/render-board schema data update)
           )
         (update (first schema) (last schema))
-
-        (prn ((partial make-slice db) :state :title))
-        (prn (data/q '[:find ?entity ?attr ?value
-                :in $ [[[?attr [[?aprop ?avalue] ...]] ...] ?t]
-                :where [(= ?avalue :db.card/available)]
-                [?entity ?attr ?value]]
-              db [s a]))
       ) rep)
     )
 
