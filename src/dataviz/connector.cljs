@@ -20,17 +20,17 @@
   	      (prn "fetched from" url)
 	      (prn "status code" (:status response))
 	      (def data (map (fn[x] (IssueData. (:id x) (:title x) (:state x) (:body x) (:login (:user x)) (:assignee x))) (:body response)))
-	      (prn "fetched issues" data)
-	      (store data db-created-cont)
+	      (def filtered-data (filter (fn[x] (some? (:assignee x))) data))
+	      (store filtered-data db-created-cont)
        )
   )
 )
 
 (defn store
   [data db-created-cont]
-  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee 
-  	(if (nil? (:assignee item)) "no assignee" (:login (:assignee item))) }) data))
-  (comment (prn "data to store" db-data))
+  (prn "data to db" filtered-data)
+  (def db-data (map (fn[item] {:id (:id item), :title (:title item), :state (:state item), :body (:body item), :user (:user item) :assignee (:login (:assignee item)) }) data))
+  ;(prn "data to store" db-data)
   (def schema
       { 
       	  :id  {:db/axis :db.axis/none :db/card :db.card/available} 
@@ -46,6 +46,6 @@
             (ds/db-with db-data)
           )
   )
-  (comment (prn "data script db data" db))
+  ;(prn "data script db data" db)
   (db-created-cont db)
 )

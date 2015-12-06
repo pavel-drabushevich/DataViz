@@ -152,7 +152,7 @@
               (= (:db/axis v) :db.axis/available))
           (:schema db)))))
 
-    (c/import "https://api.github.com/repos/pavel-drobushevich/DataViz/issues" (fn[db]
+    (c/import "https://api.github.com/repos/pavel-drobushevich/DataViz/issues?state=all" (fn[db]
         (prn "db data = " db)
         (prn "db metadata = " (:schema db))
 
