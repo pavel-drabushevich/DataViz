@@ -1,7 +1,7 @@
 (defproject dataviz "0.1.0"
   :plugins [[lein-cljsbuild "1.1.1"]]
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.170"]
+                 [org.clojure/clojurescript "1.7.228"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [datascript "0.13.0"]
                  [quiescent/quiescent "0.2.0-RC1"]

@@ -31,6 +31,7 @@
   )
 )
 
+
 (q/defcomponent Selector
   [val]
   (def items (:items val))
@@ -46,6 +47,11 @@
            (map (fn [x] (Option x (= x value)))
                 items)
   )
+)
+
+(q/defcomponent CodeInput
+  [code]
+  (d/textarea {:value code})
 )
 
 (q/defcomponent CellText
@@ -83,8 +89,19 @@
                                 :onChange #((:update full-state) (:x? full-state) %1)
                               })
                     " as Y \u2193"
+                    " code "
+                    (CodeInput (:code-sample full-state)))
+                    (d/button {:onClick (fn [_]
+                                          (let [code (:code-sample full-state)
+                                                cont (:add-code full-state)
+                                               ]
+                                              (cont code)
+                                          )
+                                        )
+                              }
+                    "Add Code!")
              )
-  ))
+  )
 
 (defn getter [k row]
   (nth row k))
@@ -152,7 +169,7 @@
   ))
 
 (defn board-state
-  [schema data trigger-update]
+  [schema data trigger-update add-code]
     {
        :xs (conj schema "none")
        :ys (conj schema "none")
@@ -162,6 +179,12 @@
        :yvalues (:values (:yaxis data))
        :cells (:cells data)
        :update trigger-update
+       :add-code add-code
+       :code-sample "
+       (let [x 1 y 2]
+         (+ x y)
+       )
+       "
     })
 
 (def state-atom (atom {:source-type "github"
@@ -188,8 +211,8 @@
   ))
 
 (defn render-board
-  [schema data trigger-update]
-  (q/render (Board (board-state schema data trigger-update)) js/document.body))
+  [schema data trigger-update add-code]
+  (q/render (Board (board-state schema data trigger-update add-code)) js/document.body))
 
 (defn render-home
   [choose]
